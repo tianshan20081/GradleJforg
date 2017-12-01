@@ -1,0 +1,83 @@
+apply plugin: 'com.android.library'
+apply from: "$rootDir/config.gradle"
+apply plugin: 'com.jfrog.artifactory'
+apply plugin: 'maven-publish'
+
+def MAVEN_LOCAL_PATH = urls.localUploadPath
+def ARTIFACT_ID = artifactIds.fgLibAid
+def VERSION_NAME = versions.fglibVersion
+def GROUP_ID = groupIds.fgLibGroupId
+
+/**
+ * 命令行编译上传:
+ *  (这是一条命令)
+ *  gradle
+ *  :stat:assembleRelease
+ *  :stat:generatePomFileForMavenArrPublication
+ *  :stat:artifactoryPublish
+ */
+
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionName rootProject.ext.appVersionName
+        versionCode rootProject.ext.appVersionCode
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    testImplementation deps.junit
+
+}
+
+publishing {
+    publications {
+        // mavenArr 在这里
+        mavenArr(MavenPublication) {
+            groupId GROUP_ID
+            version = VERSION_NAME
+            artifactId ARTIFACT_ID
+            // 这里获得arr 生成的位置和上传
+            artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+        }
+    }
+}
+
+artifactory {
+    contextUrl = MAVEN_LOCAL_PATH
+    publish {
+        repository {
+            // The Artifactory repository key to publish to
+            repoKey = localRespos.repoName
+            username = localRespos.userName
+            password = localRespos.password
+            maven = true
+        }
+        defaults {
+            // 这里的 mavenArr 指向上面 publishing/publications/mavenArr
+            publications('mavenArr')
+        }
+    }
+    resolve {
+        repoKey = 'jcenter'
+    }
+}
+

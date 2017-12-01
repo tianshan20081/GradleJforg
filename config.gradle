@@ -1,0 +1,34 @@
+ext.versions = [
+        // 本地仓库版本
+        fglibVersion: '0.0.2',
+        mockVersion : '0.0.2',
+]
+
+// 本地仓库配置
+
+//def LOCAL_SERVER_IP = "127.0.0.1"
+def LOCAL_SERVER_IP = "172.16.116.19"
+def LOCAL_SERVER_PORT = "8081"
+
+ext.artifactIds = [
+        fgLibAid: "stat",
+        mockAid : "mock",
+]
+
+ext.groupIds = [
+        fgLibGroupId: "com.gooker.fglib",
+        mockGroupId : "com.gooker.mock",
+]
+
+
+ext.urls = [
+        localUseMaven  : "http://" + LOCAL_SERVER_IP + ":" + LOCAL_SERVER_PORT + "/artifactory/fglib-release/",
+        localUploadPath: "http://" + LOCAL_SERVER_IP + ":" + LOCAL_SERVER_PORT + "/artifactory",
+        localUseMavenMock  : "http://" + LOCAL_SERVER_IP + ":" + LOCAL_SERVER_PORT + "/artifactory/mock-release/",
+]
+ext.localRespos = [
+        repoName: "fglib-release",
+        repoMockName: "mock-release",
+        userName: "admin",
+        password: "0000123456"
+]
